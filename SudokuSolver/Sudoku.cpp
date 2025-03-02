@@ -142,6 +142,29 @@ bool Sudoku::isPossible(short x, short y, short number)
     return true;
 }
 
+bool Sudoku::isValidPlacement(const Grid& tempGrid, int row, int col, int num) {
+    // Check the row
+    for (int i = 0; i < 9; ++i) {
+        if (tempGrid[row][i] == num) return false;
+    }
+
+    // Check the column
+    for (int i = 0; i < 9; ++i) {
+        if (tempGrid[i][col] == num) return false;
+    }
+
+    // Check the 3x3 box
+    int boxRowStart = (row / 3) * 3;
+    int boxColStart = (col / 3) * 3;
+    for (int r = boxRowStart; r < boxRowStart + 3; ++r) {
+        for (int c = boxColStart; c < boxColStart + 3; ++c) {
+            if (tempGrid[r][c] == num) return false;
+        }
+    }
+
+    return true;
+}
+
 
 void Sudoku::BackTrackSolve()
 {
@@ -224,6 +247,34 @@ void Sudoku::printPossibilities() {
     std::cout << "  +-------------------------------+-------------------------------+-------------------------------+\n";
 }
 
+bool Sudoku::basicHintSolve(int max_steps)
+{
+    short size;
+    short changes;
+    bool solved = false;
+    for (int k = 0;k <= max_steps;k++) {
+        changes = 0; // czy w iteracji byla jakas zmiana
+        findHints();
+        //printPossibilities();
+        //std::cout << "\n-----------------------\n";
+        for (int x = 0; x < 9; ++x) {
+            for (int y = 0; y < 9; ++y) {
+                size = possibilities[x][y].size();
+                if (size == 1) { //only one possibility for a square
+                    grid[x][y] = possibilities[x][y][0]; //put it in the grid
+                    changes++;
+                }
+            }
+        }
+
+        if (changes == 0) { solved = true; break; }
+
+        clearPossibilities();
+    }
+
+    return solved;
+}
+
 bool Sudoku::insertNumber(short x, short y, short number)
 {
     if (number == 0) { grid[x][y] = number; return true; }
@@ -279,4 +330,58 @@ bool Sudoku::insertNumber(short x, short y, short number)
     }
     return true;
 
+}
+
+void Sudoku::initializeFromUserInput()
+{
+    std::cout << "Enter your Sudoku puzzle row by row (use '0' for empty cells):\n";
+    Grid tempGrid = {}; // temporary grid for input validation
+
+    for (int row = 0; row < 9; ++row) {
+        std::string inputRow;
+        bool validRow = false;
+
+        while (!validRow) {
+            std::cout << "Row " << row + 1 << ": ";
+            std::cin >> inputRow;
+
+            // check if the input has exactly 9 characters
+            if (inputRow.length() != 9) {
+                std::cout << "Invalid input. Each row must have exactly 9 digits. Try again.\n";
+                continue;
+            }
+
+            // check if all characters are digits
+            bool allDigits = true;
+            for (char c : inputRow) {
+                if (!isdigit(c)) {
+                    allDigits = false;
+                    break;
+                }
+            }
+            if (!allDigits) {
+                std::cout << "Invalid input. Only digits (0-9) are allowed. Try again.\n";
+                continue;
+            }
+
+            // check for validity of the row within the Sudoku rules
+            bool validPlacement = true;
+            for (int col = 0; col <= 8; ++col) {
+                int num = inputRow[col] - '0'; // convert from char to number
+                if (num != 0 and !isValidPlacement(tempGrid, row, col, num)) {
+                    std::cout << "Invalid Sudoku. The number " << num << " conflicts with row, column, or box rules. Try again.\n";
+                    validPlacement = false;
+                    break;
+                }
+                tempGrid[row][col] = num; // temporarily place the number for validation
+            }
+
+            if (validPlacement) validRow = true;
+        }
+    }
+
+    grid = tempGrid;
+    clearPossibilities();
+    std::cout << "Sudoku grid initialized successfully.\n";
+    printOutTheGrid();
 }

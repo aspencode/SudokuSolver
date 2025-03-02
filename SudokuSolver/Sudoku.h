@@ -34,6 +34,9 @@ private:
 
     bool isPossible(short x, short y, short number); //checks if a number in col y, row x is possible to be put there
 
+    bool isValidPlacement(const Grid& tempGrid, int row, int col, int num);
+
+
 public:
 
     /* CONSTRUNTORS */
@@ -46,15 +49,22 @@ public:
     /**/
 
     bool readFromFile(const std::string& sciezka);
+    void initializeFromUserInput();
     void printOutTheGrid();
+
+    /**/
     void BackTrackSolve();
 
     /* possibilities */
     void findHints();
     void clearPossibilities();
     void printPossibilities();
+    bool basicHintSolve(int max_steps);
+
     /**/
     bool insertNumber(short x, short y, short number);
+
+
     
 
 };
