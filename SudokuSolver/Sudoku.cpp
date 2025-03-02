@@ -78,6 +78,13 @@ void Sudoku::printOutTheGrid()
     
 }
 
+bool Sudoku::cellContains(const std::vector<short>& cell, short num)
+{
+    if (cell.empty()) return false;
+    return std::find(cell.begin(), cell.end(), num) != cell.end();
+
+}
+
 bool Sudoku::boxContainsNumber(short x, short y, short number)
 {
     int xBox = (x / 3) * 3; //top of box
@@ -143,3 +150,32 @@ void Sudoku::BackTrackSolve()
 }
 
 
+void Sudoku::findHints()
+{
+
+    for (short x = 0;x < 9;x++) { //for every row
+        for (short y = 0; y < 9; y++) { //for every column
+            for (short num = 1; num < 10; ++num) { //for every number (1,2,3,...,9)
+                if (grid[x][y] != 0) break; //if there is already a number in, break
+                if (isPossible(x, y, num) and !cellContains(possibilities[x][y], num)) {
+                    possibilities[x][y].push_back(num); //put all possibilities in
+
+                }
+            }
+        }
+    }
+
+}
+
+void Sudoku::clearPossibilities()
+{
+    short size;
+    for (int x = 0; x < 9; ++x) { //resetting the possibility array
+        for (int y = 0; y < 9; ++y) {
+            size = possibilities[x][y].size();
+            if (size != 0)
+                for (int i = 0; i < size; i++)
+                    possibilities[x][y].pop_back();
+        }
+    }
+}

@@ -27,7 +27,7 @@ private:
     Grid grid;
     int solutions = 0;
 
-
+    bool cellContains(const std::vector<short>& cell, short num);
     bool boxContainsNumber(short x, short y, short number);
     bool rowContainsNumber(short row, short number);
     bool colContainsNumber(short col, short number);
@@ -49,5 +49,8 @@ public:
 
     void printOutTheGrid();
 
-    void BackTrackSolve(); //backtrack solver
+    void BackTrackSolve();
+    void findHints();
+    //backtrack solver
+    void clearPossibilities();
 };
