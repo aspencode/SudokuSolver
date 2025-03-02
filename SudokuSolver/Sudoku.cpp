@@ -67,16 +67,30 @@ bool Sudoku::readFromFile(const std::string& sciezka)
 
 void Sudoku::printOutTheGrid()
 {
-    
+    std::cout << "    1 2 3   4 5 6   7 8 9\n"; // column numbers
+    std::cout << "  +-------+-------+-------+\n";
+
     for (int x = 0; x < 9; x++) {
+        std::cout << x + 1 << " | ";  // row number
+
         for (int y = 0; y < 9; y++) {
-            std::cout << grid[x][y];
+            if (grid[x][y] == 0)
+                std::cout << "  ";  // if 0 in grid, print out "  " 
+            else
+                std::cout << grid[x][y] << " ";
+
+            // box seperators vertical
+            if (y == 2 || y == 5)
+                std::cout << "| ";
         }
-        std::cout << '\n';
+        std::cout << "|\n";
+        if (x == 2 || x == 5) // box separators horizontal
+            std::cout << "  +-------+-------+-------+\n";
     }
-    std::cout << '\n';
-    
+
+    std::cout << "  +-------+-------+-------+\n";
 }
+
 
 bool Sudoku::cellContains(const std::vector<short>& cell, short num)
 {
@@ -178,4 +192,91 @@ void Sudoku::clearPossibilities()
                     possibilities[x][y].pop_back();
         }
     }
+}
+
+void Sudoku::printPossibilities() {
+    std::cout << "    ----1---- ----2---- ----3----   ----4---- ----5---- ----6----   ----7---- ----8---- ----9----\n";
+    std::cout << "  +-------------------------------+-------------------------------+-------------------------------+\n";
+    for (int x = 0; x < 9; ++x) {
+        std::cout << 1 + x << " "; // row nr signifier
+        for (int y = 0; y < 9; ++y) {
+            if (y % 3 == 0) std::cout << "| "; // box separators
+            const auto& cell = possibilities[x][y];
+            std::string display(9, ' '); // "         " (9 spaces)
+            if (cell.empty()) {
+                std::fill(display.begin(), display.end(), ' '); // fill display with just 9 spaces
+            }
+            else {
+                for (int val : cell) {
+                    display[val - 1] = val + '0'; // display is (0,8) and cells have numbers (1-9) so -1
+                }
+            }
+            std::cout << display << " ";
+        }
+        std::cout << "|\n";
+        if (x < 8) {
+            if (x % 3 == 2)
+                std::cout << "  +-------------------------------+-------------------------------+-------------------------------+\n";
+            else
+                std::cout << "  |-------------------------------|-------------------------------|-------------------------------|\n";
+        }
+    }
+    std::cout << "  +-------------------------------+-------------------------------+-------------------------------+\n";
+}
+
+bool Sudoku::insertNumber(short x, short y, short number)
+{
+    if (number == 0) { grid[x][y] = number; return true; }
+    if (!isPossible(x, y, number)) return false;
+    grid[x][y] = number;
+    possibilities[x][y] = {};
+    // remove hints in row
+    for (int y_ = 0; y_ <= 8; y_++) {
+        int index{ -1 };
+        int size = possibilities[x][y_].size();
+        if (size != 0) {
+            for (int i = 0; i < size; i++) //iterate through pencil marks
+            {
+                if (possibilities[x][y_][i] == number) //if it has the number, remove it
+                {
+                    possibilities[x][y_].erase(possibilities[x][y_].begin() + i); break;
+                }
+            }
+        }
+
+    }
+    //remove hints in column
+    for (int x_ = 0; x_ <= 8; x_++) {
+        int index{ -1 };
+        int size = possibilities[x_][y].size();
+        if (size != 0) {
+            for (int i = 0; i < size; i++) //iterate through pencil marks
+            {
+                if (possibilities[x_][y][i] == number) //if it has the number, remove it
+                {
+                    possibilities[x_][y].erase(possibilities[x_][y].begin() + i); break;
+                }
+            }
+        }
+    }
+    // remove hints in box
+    int xBox = (x / 3) * 3; //top of box
+    int yBox = (y / 3) * 3; // left of box
+
+    for (int b = 0; b <= 2; b++) {
+        for (int a = 0; a <= 2; a++) {
+            int size = possibilities[xBox + b][yBox + a].size();
+            if (size != 0) {
+                for (int i = 0; i < size; i++) //iterate through pencil marks
+                {
+                    if (possibilities[xBox + b][yBox + a][i] == number) //if it has the number, remove it
+                    {
+                        possibilities[xBox + b][yBox + a].erase(possibilities[xBox + b][yBox + a].begin() + i); break;
+                    }
+                }
+            }
+        }
+    }
+    return true;
+
 }

@@ -46,11 +46,15 @@ public:
     /**/
 
     bool readFromFile(const std::string& sciezka);
-
     void printOutTheGrid();
-
     void BackTrackSolve();
+
+    /* possibilities */
     void findHints();
-    //backtrack solver
     void clearPossibilities();
+    void printPossibilities();
+    /**/
+    bool insertNumber(short x, short y, short number);
+    
+
 };
