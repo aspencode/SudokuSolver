@@ -385,3 +385,121 @@ void Sudoku::initializeFromUserInput()
     std::cout << "Sudoku grid initialized successfully.\n";
     printOutTheGrid();
 }
+
+void Sudoku::hiddenSingleInBox(short x, short y)
+{
+    // Checking the box it's in
+    int xBox = (x / 3) * 3; //top of box
+    int yBox = (y / 3) * 3; // left of box
+
+    int xLocation;
+    int yLocation;
+    int iLocation;
+    short cnt = 0;
+    for (short number = 1; number < 10; number++) {
+        cnt = 0;
+        for (int b = 0;b <= 2;b++) {
+            for (int a = 0;a <= 2;a++) {
+                int size = possibilities[xBox + b][yBox + a].size();
+                if (size != 0) {
+                    for (int i = 0; i < size; i++) //iterate through pencil marks
+                    {
+
+                        if (possibilities[xBox + b][yBox + a][i] == number) //if it has the number, save its location and up cnt
+                        {
+                            xLocation = xBox + b;
+                            yLocation = yBox + a;
+                            iLocation = i;
+                            cnt++;
+                        }
+
+
+                    }
+                }
+
+            }
+        }
+        if (cnt == 1) // if there is a hidden single (only found 1 pencil mark in box)
+        {
+            insertNumber(xLocation, yLocation, number);
+            cnt = 0;
+
+        }
+    }
+
+}
+
+void Sudoku::hiddenSingleInCol(short y)
+{
+    int xLocation, iLocation;
+    for (int number = 1;number <= 9;number++) {
+        short cnt = 0;
+        for (int x = 0; x <= 8; x++) {
+            int size = possibilities[x][y].size();
+            for (int i = 0; i < size; i++) //iterate through pencil marks
+            {
+                if (possibilities[x][y].size() != 0) {
+                    if (possibilities[x][y][i] == number) //if it has the number, save its location and up cnt
+                    {
+                        xLocation = x;
+                        iLocation = i;
+                        cnt++;
+                    }
+                }
+
+            }
+        }
+        if (cnt == 1) {
+            insertNumber(xLocation, y, number);
+        }
+    }
+}
+
+void Sudoku::hiddenSingleInRow(short x)
+{
+    int yLocation, iLocation;
+    for (int number = 1; number <= 9; number++) {
+        short cnt = 0;
+        for (int y = 0; y <= 8; y++) {
+            int size = possibilities[x][y].size();
+            if (size != 0) {
+                for (int i = 0; i < size; i++) //iterate through pencil marks
+                {
+
+                    if (possibilities[x][y][i] == number) //if it has the number, save its location and up cnt
+                    {
+
+                        yLocation = y;
+                        iLocation = i;
+                        cnt++;
+                    }
+
+
+                }
+            }
+        }
+        if (cnt == 1) {
+            insertNumber(x, yLocation, number);
+        }
+    }
+}
+
+void Sudoku::findAllHiddenSingles()
+{
+    for (int a = 0; a <= 6; a = a + 3) {
+        hiddenSingleInBox(a, 0);
+        hiddenSingleInBox(a, 3);
+        hiddenSingleInBox(a, 6);
+    }
+    //clearPossibilities(); findHints();
+    for (int a = 0; a <= 8; a++) {
+        hiddenSingleInRow(a);
+    }
+    //clearPossibilities(); findHints();
+    for (int a = 0; a <= 8; a++) {
+        hiddenSingleInCol(a);
+    }
+    //clearPossibilities(); findHints();
+
+
+}

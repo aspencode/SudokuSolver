@@ -59,12 +59,18 @@ public:
     void findHints();
     void clearPossibilities();
     void printPossibilities();
+
     bool basicHintSolve(int max_steps);
 
     /**/
     bool insertNumber(short x, short y, short number);
 
+    /* HIDDEN SINGLES */
 
+    void hiddenSingleInBox(short x, short y); //needs x,y of any cell that is in that box
+    void hiddenSingleInCol(short y); // needs column number (0-8)
+    void hiddenSingleInRow(short x); // needs row number (0-8)
+    void findAllHiddenSingles();
     
 
 };
