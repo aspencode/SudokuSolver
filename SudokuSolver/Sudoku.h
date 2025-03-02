@@ -26,6 +26,14 @@ private:
     std::array<std::array<std::vector<short>, 9>, 9> possibilities;
     Grid grid;
     int solutions = 0;
+
+
+    bool boxContainsNumber(short x, short y, short number);
+    bool rowContainsNumber(short row, short number);
+    bool colContainsNumber(short col, short number);
+
+    bool isPossible(short x, short y, short number); //checks if a number in col y, row x is possible to be put there
+
 public:
 
     /* CONSTRUNTORS */
@@ -34,4 +42,12 @@ public:
     Sudoku(const std::string& sciezka);
 
     Sudoku(const Grid& _grid);
+
+    /**/
+
+    bool readFromFile(const std::string& sciezka);
+
+    void printOutTheGrid();
+
+    void BackTrackSolve(); //backtrack solver
 };
