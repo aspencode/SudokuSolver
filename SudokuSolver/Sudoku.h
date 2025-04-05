@@ -79,4 +79,7 @@ public:
     void hiddenPairInRow(short x);
     void findAllHiddenPairs();
 
+    /* xWing */
+    void xWing();
+
 };

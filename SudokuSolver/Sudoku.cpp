@@ -683,3 +683,63 @@ void Sudoku::findAllHiddenPairs()
     }
 
 }
+
+void Sudoku::xWing() {
+    // iterate through all pairs of rows
+    for (short h1 = 0; h1 < 9; ++h1) {
+        for (short h2 = h1 + 1; h2 < 9; ++h2) {
+            // iterate through all pairs of columns
+            for (short v1 = 0; v1 < 9; ++v1) {
+                for (short v2 = v1 + 1; v2 < 9; ++v2) {
+
+                    // check if the corners of the rectangle have any pencil marks
+                    if (possibilities[h1][v1].size() > 0 and possibilities[h1][v2].size() > 0 and
+                        possibilities[h2][v1].size() > 0 and possibilities[h2][v2].size() > 0) {
+
+                        // find common candidates (pencil marks) in the four corners
+                        std::vector<short> candidates;
+                        for (short val : possibilities[h1][v1]) { //iterate over possibilities for [h1][v1]
+                            if (cellContains(possibilities[h1][v2], val) and
+                                cellContains(possibilities[h2][v1], val) and
+                                cellContains(possibilities[h2][v2], val))
+                            {
+
+                                candidates.push_back(val);
+                            }
+                        }
+
+                        // process each candidate to see if it satisfies the X-Wing condition
+                        for (short candidate : candidates) {
+                            bool validXWing = true;
+
+                            // check how many times candidate appears in h1 and h2
+                            short count_h1 = 0, count_h2 = 0;
+                            for (short col = 0; col < 9; ++col) {
+                                if (std::find(possibilities[h1][col].begin(), possibilities[h1][col].end(), candidate) != possibilities[h1][col].end())
+                                    ++count_h1;
+                                if (std::find(possibilities[h2][col].begin(), possibilities[h2][col].end(), candidate) != possibilities[h2][col].end())
+                                    ++count_h2;
+                            }
+
+                            // we good if its exactly two times in both
+                            if (count_h1 != 2 or count_h2 != 2)
+                                validXWing = false;
+
+
+                            // if valid X-Wing, eliminate the candidate from other cells in columns v1 and v2
+                            if (validXWing) {
+                                for (short row = 0; row < 9; ++row) {
+                                    if (row != h1 and row != h2) {
+                                        // Remove the candidate from columns 
+                                        possibilities[row][v1].erase(std::remove(possibilities[row][v1].begin(), possibilities[row][v1].end(), candidate), possibilities[row][v1].end());
+                                        possibilities[row][v2].erase(std::remove(possibilities[row][v2].begin(), possibilities[row][v2].end(), candidate), possibilities[row][v2].end());
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
