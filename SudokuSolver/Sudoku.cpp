@@ -165,6 +165,11 @@ bool Sudoku::isValidPlacement(const Grid& tempGrid, int row, int col, int num) {
     return true;
 }
 
+void Sudoku::removePossibility(int x, int y, short number)
+{
+    possibilities[x][y].erase(std::remove(possibilities[x][y].begin(), possibilities[x][y].end(), number), possibilities[x][y].end());
+}
+
 
 void Sudoku::BackTrackSolve()
 {
@@ -742,4 +747,109 @@ void Sudoku::xWing() {
             }
         }
     }
+}
+
+
+bool Sudoku::pointingTriplesInRow(short x)
+{
+    for (short num = 1; num <= 9;num++)
+    {
+        if (rowContainsNumber(x, num)) continue;
+
+        int w1 = 1, w2 = 2;
+
+        if (x == 1 or x == 4 or x == 7) { w1 == -1; w2 == 1; } //box's 2nd (middle) row
+        else if (x == 2 or x == 5 or x == 8) { w1 = -2; w2 = -1; } //box's 3rd (bottom) row
+
+        //int a = 0; // int a ----------- what box are we in horizontally (a==0->1st, a==3->2nd, a==6->3rd)
+        for (int a = x;a <= 8;a = a + 3) {
+            if (!boxContainsNumber(x, a, num) &&
+                cellContains(possibilities[x][a], num) &&
+                cellContains(possibilities[x][a + w1], num) &&
+                cellContains(possibilities[x][a + w2], num))
+                // checking if the number is in all three cells of the row of the box
+            {
+
+                if (!cellContains(possibilities[x + w1][a], num) &&
+                    !cellContains(possibilities[x + w1][a + 1], num) &&
+                    !cellContains(possibilities[x + w1][a + 2], num) &&
+                    !cellContains(possibilities[x + w2][a], num) &&
+                    !cellContains(possibilities[x + w2][a + 1], num) &&
+                    !cellContains(possibilities[x + w2][a + 2], num))
+                    // checking if all the other cells in the box don't have num
+                {
+                    //there is a pointing triple
+                    if (a == 0) {
+                        removePossibility(x, 3, num); removePossibility(x, 4, num); removePossibility(x, 5, num);  removePossibility(x, 6, num); removePossibility(x, 7, num); removePossibility(x, 8, num);
+                    }
+                    else if (a == 3) {
+                        removePossibility(x, 0, num); removePossibility(x, 1, num); removePossibility(x, 2, num);  removePossibility(x, 6, num); removePossibility(x, 7, num); removePossibility(x, 8, num);
+                    }
+                    else if (a == 6) {
+                        removePossibility(x, 0, num); removePossibility(x, 1, num); removePossibility(x, 2, num);  removePossibility(x, 3, num); removePossibility(x, 4, num); removePossibility(x, 5, num);
+                    }
+                    return true;
+                }
+            }
+        }
+    }
+    return false;
+}
+
+bool Sudoku::pointingTriplesInCol(short y)
+{
+    for (short num = 1; num <= 9; num++)
+    {
+        if (colContainsNumber(y, num)) continue;
+
+        int w1 = 1, w2 = 2;
+
+        if (y == 1 || y == 4 || y == 7) { w1 = -1; w2 = 1; } // box's 2nd (middle) column
+        else if (y == 2 || y == 5 || y == 8) { w1 = -2; w2 = -1; } // box's 3rd (right) column
+
+        // int a = 0; // int a ----------- which box we are in vertically (a == 0 -> 1st, a == 3 -> 2nd, a == 6 -> 3rd)
+        for (int a = y; a <= 8; a = a + 3)
+        {
+            if (!boxContainsNumber(a, y, num) &&
+                cellContains(possibilities[a][y], num) &&
+                cellContains(possibilities[a + w1][y], num) &&
+                cellContains(possibilities[a + w2][y], num))
+                // checking if the number is in all three cells of the column of the box
+            {
+                if (!cellContains(possibilities[a][y + w1], num) &&
+                    !cellContains(possibilities[a][y + w2], num) &&
+                    !cellContains(possibilities[a + 1][y + w1], num) &&
+                    !cellContains(possibilities[a + 1][y + w2], num) &&
+                    !cellContains(possibilities[a + 2][y + w1], num) &&
+                    !cellContains(possibilities[a + 2][y + w2], num))
+                    // checking if all other cells in the box don't have the number
+                {
+                    // there is a pointing triple
+                    if (a == 0) {
+                        removePossibility(3, y, num); removePossibility(4, y, num); removePossibility(5, y, num); removePossibility(6, y, num); removePossibility(7, y, num); removePossibility(8, y, num);
+                    }
+                    else if (a == 3) {
+                        removePossibility(0, y, num); removePossibility(1, y, num); removePossibility(2, y, num); removePossibility(6, y, num); removePossibility(7, y, num); removePossibility(8, y, num);
+                    }
+                    else if (a == 6) {
+                        removePossibility(0, y, num); removePossibility(1, y, num); removePossibility(2, y, num); removePossibility(3, y, num); removePossibility(4, y, num); removePossibility(5, y, num);
+                    }
+                    return true;
+                }
+            }
+        }
+    }
+    return false;
+}
+
+bool Sudoku::findAllPointingTriples()
+{
+    bool found = false;
+    for (short y = 0; y < 9; ++y) {
+        if (pointingTriplesInCol(y) == 1) found = true;
+    }
+    for (short x = 0;x < 9; ++x) {
+        if (pointingTriplesInRow(x) == 1) found = true;
+    }
+    return found;
 }

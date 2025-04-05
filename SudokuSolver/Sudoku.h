@@ -34,7 +34,9 @@ private:
 
     bool isPossible(short x, short y, short number);  //checks if a number in col y, row x is possible to be put there
 
-    bool isValidPlacement(const Grid& tempGrid, int row, int col, int num); // !
+    bool isValidPlacement(const Grid& tempGrid, int row, int col, int num); 
+
+    void removePossibility(int x, int y, short number);
 
 
 public:
@@ -82,4 +84,11 @@ public:
     /* xWing */
     void xWing();
 
+    /* POINTING TRIPLES */
+
+    bool pointingTriplesInRow(short x);
+
+    bool pointingTriplesInCol(short y);
+
+    bool findAllPointingTriples();
 };
