@@ -28,13 +28,13 @@ private:
     int solutions = 0;
 
     bool cellContains(const std::vector<short>& cell, short num);
-    bool boxContainsNumber(short x, short y, short number);
-    bool rowContainsNumber(short row, short number);
-    bool colContainsNumber(short col, short number);
+    bool boxContainsNumber(short x, short y, short number); 
+    bool rowContainsNumber(short row, short number); 
+    bool colContainsNumber(short col, short number); 
 
-    bool isPossible(short x, short y, short number); //checks if a number in col y, row x is possible to be put there
+    bool isPossible(short x, short y, short number);  //checks if a number in col y, row x is possible to be put there
 
-    bool isValidPlacement(const Grid& tempGrid, int row, int col, int num);
+    bool isValidPlacement(const Grid& tempGrid, int row, int col, int num); // !
 
 
 public:
@@ -42,9 +42,9 @@ public:
     /* CONSTRUNTORS */
     Sudoku(); // empty Grid (filled with 0s)
 
-    Sudoku(const std::string& sciezka);
-
-    Sudoku(const Grid& _grid);
+    Sudoku(const std::string& sciezka); 
+     
+    Sudoku(const Grid& _grid); 
 
     /**/
 
@@ -72,5 +72,11 @@ public:
     void hiddenSingleInRow(short x); // needs row number (0-8)
     void findAllHiddenSingles();
     
+    /* HIDDEN PAIRS */
+
+    void hiddenPairInBox(short x, short y); //needs x,y of any cell that is in that box
+    void hiddenPairInCol(short y);
+    void hiddenPairInRow(short x);
+    void findAllHiddenPairs();
 
 };

@@ -503,3 +503,183 @@ void Sudoku::findAllHiddenSingles()
 
 
 }
+
+void Sudoku::hiddenPairInBox(short x, short y)
+{
+    int num1Counter, num2Counter;
+    int num1Loc1X{ -1 }, num1Loc1Y{ -1 }, num1Loc2X{ -1 }, num1Loc2Y{ -1 };
+    int num2Loc1X{ -1 }, num2Loc1Y{ -1 }, num2Loc2X{ -1 }, num2Loc2Y{ -1 };
+
+    int xBox = (x / 3) * 3; //top of box
+    int yBox = (y / 3) * 3; // left of box
+    for (short num1 = 1; num1 <= 9; num1++) {
+        for (short num2 = 1; num2 <= 9; num2++) {
+
+            if (num2 != num1 and boxContainsNumber(x, y, num1) == 0 and boxContainsNumber(x, y, num2) == 0) {
+                num1Counter = 0; num2Counter = 0;
+                num1Loc1X = -1; num1Loc1Y = -1; num1Loc2X = -1; num1Loc2Y = -1;
+                num2Loc1X = -1; num2Loc1Y = -1; num2Loc2X = -1; num2Loc2Y = -1;
+                for (int b = 0; b <= 2; b++) {
+                    for (int a = 0; a <= 2; a++) {
+                        int size = possibilities[xBox + b][yBox + a].size();
+                        if (size != 0) {
+                            for (int i = 0; i < size; i++) //iterate through pencil marks
+                            {
+                                if (possibilities[xBox + b][yBox + a][i] == num1) {
+                                    num1Counter++;
+                                    if (num1Counter == 1) {
+                                        num1Loc1X = xBox + b;
+                                        num1Loc1Y = yBox + a;
+                                    }
+                                    else if (num1Counter == 2) {
+                                        num1Loc2X = xBox + b;
+                                        num1Loc2Y = yBox + a;
+                                    }
+                                }
+                                if (possibilities[xBox + b][yBox + a][i] == num2) {
+
+                                    num2Counter++;
+                                    if (num2Counter == 1) {
+                                        num2Loc1X = xBox + b;
+                                        num2Loc1Y = yBox + a;
+                                    }
+                                    else if (num2Counter == 2) {
+                                        num2Loc2X = xBox + b;
+                                        num2Loc2Y = yBox + a;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                if (num1Counter == 2 and num2Counter == 2) {
+                    if (num1Loc1X == num2Loc1X and num1Loc1Y == num2Loc1Y and num1Loc2X == num2Loc2X and num1Loc2Y == num2Loc2Y) {
+                        // found hidden pair
+                        possibilities[num1Loc1X][num1Loc1Y] = { num1, num2 };
+                        possibilities[num2Loc2X][num2Loc2Y] = { num1, num2 };
+                    }
+                }
+            }
+        }
+    }
+}
+
+void Sudoku::hiddenPairInCol(short y)
+{
+    int num1Counter, num2Counter;
+    int num1Loc1X{ -1 }, num1Loc2X{ -1 };
+    int num2Loc1X{ -1 }, num2Loc2X{ -1 };
+    for (short num1 = 1; num1 <= 9; num1++) {
+        for (short num2 = 1; num2 <= 9; num2++) {
+            if (num1 != num2) {
+                num1Counter = 0; num2Counter = 0;
+                num1Loc1X = -1;  num1Loc2X = -1;
+                num2Loc1X = -1;  num2Loc2X = -1;
+                for (int x = 0; x <= 8; x++) { //iterate column
+                    int size = possibilities[x][y].size();
+                    if (size != 0) {
+                        for (int i = 0; i < size; i++) //iterate through pencil marks
+                        {
+                            if (possibilities[x][y][i] == num1) {
+                                num1Counter++;
+                                if (num1Counter == 1)
+                                    num1Loc1X = x;
+                                else if (num1Counter == 2)
+                                    num1Loc2X = x;
+
+
+                            }
+                            if (possibilities[x][y][i] == num2) {
+                                num2Counter++;
+                                if (num2Counter == 1)
+                                    num2Loc1X = x;
+                                else if (num2Counter == 2)
+                                    num2Loc2X = x;
+
+
+                            }
+                        }
+                    }
+                }
+
+                if (num1Counter == 2 and num2Counter == 2) {
+                    if (num1Loc1X == num2Loc1X and num1Loc2X == num2Loc2X) {
+                        // found hidden pair
+                        possibilities[num1Loc1X][y] = { num1, num2 };
+                        possibilities[num2Loc2X][y] = { num1, num2 };
+                    }
+                }
+            }
+
+        }
+    }
+}
+
+void Sudoku::hiddenPairInRow(short x)
+{
+    int num1Counter, num2Counter;
+    int num1Loc1Y{ -1 }, num1Loc2Y{ -1 };
+    int num2Loc1Y{ -1 }, num2Loc2Y{ -1 };
+    for (short num1 = 1; num1 <= 9; num1++) {
+        for (short num2 = 1; num2 <= 9; num2++) {
+            if (num1 != num2) {
+                num1Counter = 0; num2Counter = 0;
+                num1Loc1Y = -1;  num1Loc2Y = -1;
+                num2Loc1Y = -1;  num2Loc2Y = -1;
+                for (int y = 0; y <= 8; y++) { //iterate row
+                    int size = possibilities[x][y].size();
+                    if (size != 0) {
+                        for (int i = 0; i < size; i++) //iterate through pencil marks
+                        {
+                            if (possibilities[x][y][i] == num1) {
+                                num1Counter++;
+                                if (num1Counter == 1)
+                                    num1Loc1Y = y;
+                                else if (num1Counter == 2)
+                                    num1Loc2Y = y;
+
+
+                            }
+                            if (possibilities[x][y][i] == num2) {
+                                num2Counter++;
+                                if (num2Counter == 1)
+                                    num2Loc1Y = y;
+                                else if (num2Counter == 2)
+                                    num2Loc2Y = y;
+
+
+                            }
+                        }
+                    }
+                }
+
+                if (num1Counter == 2 and num2Counter == 2) {
+                    if (num1Loc1Y == num2Loc1Y and num1Loc2Y == num2Loc2Y) {
+                        // found hidden pair
+                        possibilities[x][num1Loc1Y] = { num1, num2 };
+                        possibilities[x][num2Loc2Y] = { num1, num2 };
+                    }
+                }
+            }
+
+        }
+    }
+}
+
+void Sudoku::findAllHiddenPairs()
+{
+    for (int a = 0; a <= 6; a = a + 3) {
+        hiddenPairInBox(a, 0);
+        hiddenPairInBox(a, 3);
+        hiddenPairInBox(a, 6);
+    }
+
+    for (int a = 0; a <= 8; a++) {
+        hiddenPairInRow(a);
+    }
+
+    for (int a = 0; a <= 8; a++) {
+        hiddenPairInCol(a);
+    }
+
+}
