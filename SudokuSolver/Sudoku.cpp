@@ -191,6 +191,11 @@ void Sudoku::BackTrackSolve()
     printOutTheGrid();
 }
 
+int Sudoku::getSolutions()
+{
+    return solutions;
+}
+
 
 void Sudoku::findHints()
 {
@@ -390,6 +395,98 @@ void Sudoku::initializeFromUserInput()
     std::cout << "Sudoku grid initialized successfully.\n";
     printOutTheGrid();
 }
+
+void Sudoku::insertNumberFromUserInput() {
+    int row, col, num;
+
+    // Prompt the user for row, column, and number
+    std::cout << "Enter the row (1-9): ";
+    std::cin >> row;
+
+    // Validate the row input
+    while (row < 1 || row > 9) {
+        std::cout << "Invalid row. Please enter a row between 1 and 9: ";
+        std::cin >> row;
+    }
+
+    std::cout << "Enter the column (1-9): ";
+    std::cin >> col;
+
+    // Validate the column input
+    while (col < 1 || col > 9) {
+        std::cout << "Invalid column. Please enter a column between 1 and 9: ";
+        std::cin >> col;
+    }
+
+    std::cout << "Enter the number (0-9) to insert (0 clears the cell): ";
+    std::cin >> num;
+
+    // Validate the number input
+    while (num < 0 || num > 9) {
+        std::cout << "Invalid number. Please enter a number between 0 and 9: ";
+        std::cin >> num;
+    }
+
+    // Check if the insertion is valid
+    if (isPossible(row - 1, col - 1, num)) {
+        // Insert the number into the grid
+        insertNumber(row - 1, col - 1, num);
+        std::cout << "Number " << num << " inserted at (" << row << ", " << col << ").\n";
+    }
+    else {
+        std::cout << "The number " << num << " cannot be inserted at (" << row << ", " << col << ") due to Sudoku rules.\n";
+    }
+}
+
+void Sudoku::insertPencilMarkFromUserInput() {
+    short row, col, num;
+
+    // Prompt the user for row, column, and number
+    std::cout << "Enter the row (1-9): ";
+    std::cin >> row;
+
+    // Validate the row input
+    while (row < 1 || row > 9) {
+        std::cout << "Invalid row. Please enter a row between 1 and 9: ";
+        std::cin >> row;
+    }
+
+    std::cout << "Enter the column (1-9): ";
+    std::cin >> col;
+
+    // Validate the column input
+    while (col < 1 || col > 9) {
+        std::cout << "Invalid column. Please enter a column between 1 and 9: ";
+        std::cin >> col;
+    }
+
+
+    std::cout << "Enter the pencil mark (0-9) to insert, 0 clears all pencil marks in that cell: ";
+    std::cin >> num;
+
+    // Validate the pencil mark input
+    while (num < 0 || num > 9) {
+        std::cout << "Invalid number. Please enter a pencil mark between 0 and 9: ";
+        std::cin >> num;
+    }
+
+    if (num == 0) {
+        possibilities[row - 1][col - 1] = {};
+    }
+    else if (num >= 1 and num <= 9) {
+        // Check if the pencil mark can be inserted
+        if (grid[row - 1][col - 1] == 0 and !cellContains(possibilities[row - 1][col - 1], num)) {
+            // Insert the pencil mark into the possibilities grid
+            possibilities[row - 1][col - 1].push_back(num);
+            std::cout << "Pencil mark " << num << " inserted at (" << row << ", " << col << ").\n";
+        }
+        else {
+            std::cout << "The cell at (" << row << ", " << col << ") is already filled and cannot have a pencil mark or already has that pencil mark.\n";
+        }
+    }
+
+}
+
 
 void Sudoku::hiddenSingleInBox(short x, short y)
 {

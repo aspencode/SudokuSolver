@@ -51,11 +51,21 @@ public:
     /**/
 
     bool readFromFile(const std::string& sciezka);
-    void initializeFromUserInput();
+    
     void printOutTheGrid();
+
+    /* user input */
+
+    void initializeFromUserInput();
+
+    void insertNumberFromUserInput();
+
+    void insertPencilMarkFromUserInput();
 
     /**/
     void BackTrackSolve();
+
+    int getSolutions();
 
     /* possibilities */
     void findHints();
@@ -65,6 +75,7 @@ public:
     bool basicHintSolve(int max_steps);
 
     /**/
+
     bool insertNumber(short x, short y, short number);
 
     /* HIDDEN SINGLES */
@@ -82,13 +93,12 @@ public:
     void findAllHiddenPairs();
 
     /* xWing */
+    
     void xWing();
 
     /* POINTING TRIPLES */
 
     bool pointingTriplesInRow(short x);
-
     bool pointingTriplesInCol(short y);
-
     bool findAllPointingTriples();
 };
