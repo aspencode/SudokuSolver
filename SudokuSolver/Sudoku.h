@@ -43,23 +43,20 @@ public:
 
     /* CONSTRUNTORS */
     Sudoku(); // empty Grid (filled with 0s)
-
     Sudoku(const std::string& sciezka); 
-     
     Sudoku(const Grid& _grid); 
+
+	// TO-DO reading from file checks if puzzle is solvable/correct
 
     /**/
 
     bool readFromFile(const std::string& sciezka);
-    
     void printOutTheGrid();
 
     /* user input */
 
     void initializeFromUserInput();
-
     void insertNumberFromUserInput();
-
     void insertPencilMarkFromUserInput();
 
     /**/
@@ -101,4 +98,11 @@ public:
     bool pointingTriplesInRow(short x);
     bool pointingTriplesInCol(short y);
     bool findAllPointingTriples();
+
+    /* POINTING DOUBLES */
+
+    bool pointingDoublesInRow(short x);
+    bool pointingDoublesInCol(short y);
+    bool findAllPointingDoubles();
+
 };

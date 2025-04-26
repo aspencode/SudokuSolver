@@ -950,3 +950,95 @@ bool Sudoku::findAllPointingTriples()
     }
     return found;
 }
+
+bool Sudoku::pointingDoublesInRow(short x)
+{
+    for (short num = 1; num <= 9; num++)
+    {
+        if (rowContainsNumber(x, num)) continue; // skip if the row already contains the number
+
+        for (int boxCol = 0; boxCol < 3; boxCol++) // iterate over the 3 boxes in the row
+        {
+            int count = 0;
+            std::array<int, 2> candidate_positions = { -1, -1 };
+
+            for (int colInBox = 0; colInBox < 3; colInBox++) // iterate over the columns within the box
+            {
+                int col = boxCol * 3 + colInBox;
+                if (cellContains(possibilities[x][col], num))
+                {
+                    if (count < 2) { // only 2 because it's doubles
+                        candidate_positions[count] = col;
+                        count++;
+                    }
+                }
+            }
+
+            if (count == 2 && candidate_positions[0] >= 0 && candidate_positions[1] >= 0)
+            {
+                // Remove the number from the rest of the row outside the current box
+                for (int col = 0; col < 9; col++)
+                {
+                    if (col < boxCol * 3 || col >= (boxCol + 1) * 3) // skip cells within the box
+                    {
+                        removePossibility(x, col, num);
+                    }
+                }
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
+bool Sudoku::pointingDoublesInCol(short y)
+{
+    for (short num = 1; num <= 9; num++)
+    {
+        if (colContainsNumber(y, num)) continue; // skip if the column already contains the number
+
+        for (int boxRow = 0; boxRow < 3; boxRow++) // iterate over the 3 boxes in the column
+        {
+            int count = 0;
+            std::array<int, 2> candidate_positions = { -1, -1 };
+
+            for (int rowInBox = 0; rowInBox < 3; rowInBox++) // iterate over the rows within the box
+            {
+                int row = boxRow * 3 + rowInBox;
+                if (cellContains(possibilities[row][y], num))
+                {
+                    if (count < 2) { // only 2 because it's doubles
+                        candidate_positions[count] = row;
+                        count++;
+                    }
+                }
+            }
+
+            if (count == 2 && candidate_positions[0] >= 0 && candidate_positions[1] >= 0)
+            {
+                // Remove the number from the rest of the column outside the current box
+                for (int row = 0; row < 9; row++)
+                {
+                    if (row < boxRow * 3 || row >= (boxRow + 1) * 3) // skip cells within the box
+                    {
+                        removePossibility(row, y, num);
+                    }
+                }
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
+bool Sudoku::findAllPointingDoubles()
+{
+    bool found = false;
+    for (short y = 0; y < 9; ++y) {
+        if (pointingDoublesInCol(y) == 1) found = true;
+    }
+    for (short x = 0; x < 9; ++x) {
+        if (pointingDoublesInRow(x) == 1) found = true;
+    }
+    return found;
+}
