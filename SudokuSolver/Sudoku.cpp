@@ -65,6 +65,34 @@ bool Sudoku::readFromFile(const std::string& sciezka)
     return true;
 }
 
+bool Sudoku::readFromFile2(const std::string& path)
+{
+    std::ifstream inputFile(path);
+    if (!inputFile.is_open()) {
+        std::cerr << "Error: Could not open the file." << std::endl;
+        return false;
+    }
+
+    std::string content;
+    inputFile >> content;
+
+    if (content.size() != 81) {
+        std::cerr << "Error: File does not contain exactly 81 characters." << std::endl;
+        return false;
+    }
+
+    for (size_t i = 0; i < 81; ++i) {
+        if (!isdigit(content[i])) {
+            std::cerr << "Error: Invalid character in input. Only digits 0-9 are allowed." << std::endl;
+            return false;
+        }
+        grid[i / 9][i % 9] = content[i] - '0';
+    }
+
+    return true;
+}
+
+
 void Sudoku::printOutTheGrid()
 {
     std::cout << "    1 2 3   4 5 6   7 8 9\n"; // column numbers

@@ -51,6 +51,7 @@ public:
     /**/
 
     bool readFromFile(const std::string& sciezka);
+	bool readFromFile2(const std::string& path);
     void printOutTheGrid();
 
     /* user input */
