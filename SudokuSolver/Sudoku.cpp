@@ -119,6 +119,29 @@ void Sudoku::printOutTheGrid()
     std::cout << "  +-------+-------+-------+\n";
 }
 
+bool Sudoku::isGridCorrect() const
+{
+    for (int row = 0; row < 9; ++row) {
+        for (int col = 0; col < 9; ++col) {
+            short value = grid[row][col];
+
+            if (value != 0) {
+                // Temporarily remove the number to avoid false positive
+                Grid tempGrid = grid;
+                tempGrid[row][col] = 0;
+
+                if (!isValidPlacement(tempGrid, row, col, value)) {
+                    return false;
+                }
+            }
+        }
+    }
+
+    return true;
+}
+
+
+
 
 bool Sudoku::cellContains(const std::vector<short>& cell, short num)
 {
@@ -170,7 +193,7 @@ bool Sudoku::isPossible(short x, short y, short number)
     return true;
 }
 
-bool Sudoku::isValidPlacement(const Grid& tempGrid, int row, int col, int num) {
+bool Sudoku::isValidPlacement(const Grid& tempGrid, int row, int col, int num) const{
     // Check the row
     for (int i = 0; i < 9; ++i) {
         if (tempGrid[row][i] == num) return false;

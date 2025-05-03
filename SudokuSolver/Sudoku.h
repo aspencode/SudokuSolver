@@ -34,7 +34,7 @@ private:
 
     bool isPossible(short x, short y, short number);  //checks if a number in col y, row x is possible to be put there
 
-    bool isValidPlacement(const Grid& tempGrid, int row, int col, int num); 
+    bool isValidPlacement(const Grid& tempGrid, int row, int col, int num) const; 
 
     void removePossibility(int x, int y, short number);
 
@@ -53,6 +53,9 @@ public:
     bool readFromFile(const std::string& sciezka);
 	bool readFromFile2(const std::string& path);
     void printOutTheGrid();
+
+    bool isGridCorrect() const;
+
 
     /* user input */
 

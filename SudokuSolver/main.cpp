@@ -42,19 +42,27 @@ std::vector<Sudoku> readMultipleSudokusFromFile(const std::string& path)
 int main() {
 
 
-    std::vector<Sudoku> puzzles = readMultipleSudokusFromFile("test.txt");
+    Grid grid =
+    { { {2, 1, 0, 0, 0, 0, 0, 0 ,0},
+     {0, 0, 0, 0, 0, 0, 0, 0 ,0},
+     {0, 0, 0, 0, 0, 0, 0, 0 ,0},
+     {0, 0, 0, 0, 0, 0, 0, 0 ,0},
+     {0, 0, 0, 0, 0, 0, 0, 0 ,0},
+     {0, 0, 0, 0, 0, 0, 0, 0 ,0},
+     {0, 0, 0, 0, 0, 0, 0, 0 ,0},
+     {0, 0, 0, 0, 0, 0, 0, 0 ,0},
+     {0, 0, 0, 0, 0, 0, 0, 0 ,0}	} };
 
-    for (size_t i = 0; i < puzzles.size(); ++i) {
-        std::cout << "Puzzle #" << i + 1 << ":\n";
-        puzzles[i].printOutTheGrid();
-        std::cout << "\n";
-    }
-
-	std::cout << "Total puzzles read: " << puzzles.size() << "\n";
-
-    puzzles[0].BackTrackSolve();
-	std::cout << "\n\n\n\n\n";
-	puzzles[1].BackTrackSolve();
+	Sudoku sudoku(grid);
+	sudoku.printOutTheGrid();
+	if (sudoku.isGridCorrect())
+	{
+		std::cout << "Grid is correct\n";
+	}
+	else
+	{
+		std::cout << "Grid is NOT correct\n";
+	}
 
 	return 0;
 }
