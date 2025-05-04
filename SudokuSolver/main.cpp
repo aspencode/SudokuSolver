@@ -41,19 +41,8 @@ std::vector<Sudoku> readMultipleSudokusFromFile(const std::string& path)
 
 int main() {
 
-
-    Grid grid =
-    { { {2, 1, 0, 0, 0, 0, 0, 0 ,0},
-     {0, 0, 0, 0, 0, 0, 0, 0 ,0},
-     {0, 0, 0, 0, 0, 0, 0, 0 ,0},
-     {0, 0, 0, 0, 0, 0, 0, 0 ,0},
-     {0, 0, 0, 0, 0, 0, 0, 0 ,0},
-     {0, 0, 0, 0, 0, 0, 0, 0 ,0},
-     {0, 0, 0, 0, 0, 0, 0, 0 ,0},
-     {0, 0, 0, 0, 0, 0, 0, 0 ,0},
-     {0, 0, 0, 0, 0, 0, 0, 0 ,0}	} };
-
-	Sudoku sudoku(grid);
+	Sudoku sudoku;
+	sudoku.readFromFile2("hsbox.txt");
 	sudoku.printOutTheGrid();
 	if (sudoku.isGridCorrect())
 	{
@@ -63,6 +52,18 @@ int main() {
 	{
 		std::cout << "Grid is NOT correct\n";
 	}
+
+    sudoku.findHints();
+    sudoku.printPossibilities();
+
+    if (sudoku.hiddenSingleInBox(7, 1)) {
+		std::cout << "Hidden single found\n";
+	}
+    else {
+        std::cout << "No hidden single found\n";
+    }
+
+	sudoku.printOutTheGrid();
 
 	return 0;
 }

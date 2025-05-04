@@ -539,7 +539,7 @@ void Sudoku::insertPencilMarkFromUserInput() {
 }
 
 
-void Sudoku::hiddenSingleInBox(short x, short y)
+bool Sudoku::hiddenSingleInBox(short x, short y)
 {
     // Checking the box it's in
     int xBox = (x / 3) * 3; //top of box
@@ -549,6 +549,7 @@ void Sudoku::hiddenSingleInBox(short x, short y)
     int yLocation;
     int iLocation;
     short cnt = 0;
+    bool modified = false;
     for (short number = 1; number < 10; number++) {
         cnt = 0;
         for (int b = 0;b <= 2;b++) {
@@ -576,14 +577,16 @@ void Sudoku::hiddenSingleInBox(short x, short y)
         {
             insertNumber(xLocation, yLocation, number);
             cnt = 0;
+            modified = true;
 
         }
     }
-
+    return modified;
 }
 
-void Sudoku::hiddenSingleInCol(short y)
+bool Sudoku::hiddenSingleInCol(short y)
 {
+	bool modified = false;
     int xLocation, iLocation;
     for (int number = 1;number <= 9;number++) {
         short cnt = 0;
@@ -604,12 +607,15 @@ void Sudoku::hiddenSingleInCol(short y)
         }
         if (cnt == 1) {
             insertNumber(xLocation, y, number);
+            modified = true;
         }
     }
+    return modified;
 }
 
-void Sudoku::hiddenSingleInRow(short x)
+bool Sudoku::hiddenSingleInRow(short x)
 {
+	bool modified = false;
     int yLocation, iLocation;
     for (int number = 1; number <= 9; number++) {
         short cnt = 0;
@@ -633,27 +639,31 @@ void Sudoku::hiddenSingleInRow(short x)
         }
         if (cnt == 1) {
             insertNumber(x, yLocation, number);
+			modified = true;
         }
     }
+    return modified;
 }
 
-void Sudoku::findAllHiddenSingles()
+bool Sudoku::findAllHiddenSingles()
 {
+    bool modified = false;
     for (int a = 0; a <= 6; a = a + 3) {
-        hiddenSingleInBox(a, 0);
-        hiddenSingleInBox(a, 3);
-        hiddenSingleInBox(a, 6);
+        if (hiddenSingleInBox(a, 0)) modified = true;
+        if (hiddenSingleInBox(a, 3)) modified = true;
+        if (hiddenSingleInBox(a, 6)) modified = true;
     }
     //clearPossibilities(); findHints();
     for (int a = 0; a <= 8; a++) {
-        hiddenSingleInRow(a);
+        if(hiddenSingleInRow(a)) modified = true;
     }
     //clearPossibilities(); findHints();
     for (int a = 0; a <= 8; a++) {
-        hiddenSingleInCol(a);
+        if(hiddenSingleInCol(a)) modified = true;
     }
     //clearPossibilities(); findHints();
 
+    return modified;
 
 }
 

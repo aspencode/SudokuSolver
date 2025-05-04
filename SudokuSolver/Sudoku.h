@@ -81,10 +81,10 @@ public:
 
     /* HIDDEN SINGLES */
 
-    void hiddenSingleInBox(short x, short y); //needs x,y of any cell that is in that box
-    void hiddenSingleInCol(short y); // needs column number (0-8)
-    void hiddenSingleInRow(short x); // needs row number (0-8)
-    void findAllHiddenSingles();
+    bool hiddenSingleInBox(short x, short y); //needs x,y of any cell that is in that box
+    bool hiddenSingleInCol(short y); // needs column number (0-8)
+    bool hiddenSingleInRow(short x); // needs row number (0-8)
+    bool findAllHiddenSingles();
     
     /* HIDDEN PAIRS */
 
