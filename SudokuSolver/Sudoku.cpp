@@ -42,30 +42,7 @@ Sudoku::Sudoku(const Grid& _grid) : grid(_grid)
 {
 }
 
-bool Sudoku::readFromFile(const std::string& sciezka)
-{
-    std::ifstream inputFile(sciezka);
-    if (!inputFile.is_open()) {
-        std::cerr << "Error: Could not open the file." << std::endl;
-        return false; // Exit with an error code
-    }
-
-    std::string line;
-    int lineNr = 0;
-
-    while (std::getline(inputFile, line))
-    {
-        for (int i = 0; i < line.size(); i++) {
-
-            grid[lineNr][i] = line[i] - '0';
-        }
-        //std::cout << line <<"\t"<<lineNr<<'\n';
-        lineNr++;
-    }
-    return true;
-}
-
-bool Sudoku::readFromFile2(const std::string& path)
+bool Sudoku::readFromFile(const std::string& path, bool oneline)
 {
     std::ifstream inputFile(path);
     if (!inputFile.is_open()) {
@@ -73,23 +50,76 @@ bool Sudoku::readFromFile2(const std::string& path)
         return false;
     }
 
-    std::string content;
-    inputFile >> content;
+    if (oneline) {
+        std::string content;
+        inputFile >> content;
 
-    if (content.size() != 81) {
-        std::cerr << "Error: File does not contain exactly 81 characters." << std::endl;
-        return false;
-    }
-
-    for (size_t i = 0; i < 81; ++i) {
-        if (!isdigit(content[i])) {
-            std::cerr << "Error: Invalid character in input. Only digits 0-9 are allowed." << std::endl;
+        if (content.size() != 81) {
+            std::cerr << "Error: File does not contain exactly 81 characters." << std::endl;
             return false;
         }
-        grid[i / 9][i % 9] = content[i] - '0';
+
+        for (size_t i = 0; i < 81; ++i) {
+            if (!isdigit(content[i])) {
+                std::cerr << "Error: Invalid character in input. Only digits 0-9 are allowed." << std::endl;
+                return false;
+            }
+            grid[i / 9][i % 9] = content[i] - '0';
+        }
+
+    }
+    else {
+        std::string line;
+        int lineNr = 0;
+
+        while (std::getline(inputFile, line)) {
+            if (line.size() != 9) {
+                std::cerr << "Error: Each line must contain exactly 9 characters." << std::endl;
+                return false;
+            }
+
+            for (int i = 0; i < 9; ++i) {
+                if (!isdigit(line[i])) {
+                    std::cerr << "Error: Invalid character in input. Only digits 0-9 are allowed." << std::endl;
+                    return false;
+                }
+                grid[lineNr][i] = line[i] - '0';
+            }
+
+            ++lineNr;
+        }
+
+        if (lineNr != 9) {
+            std::cerr << "Error: File must contain exactly 9 lines." << std::endl;
+            return false;
+        }
     }
 
     return true;
+}
+
+
+bool Sudoku::saveToFile(bool oneline)
+{
+    auto timestamp = time(NULL); // Unix timestamp
+    std::string filename = std::to_string(timestamp) + ".txt";
+
+    std::ofstream myfile(filename); // Use timestamp as filename
+    if (myfile.is_open()) {
+		for (int i = 0; i < 9; ++i) {
+			for (int j = 0; j < 9; ++j) {
+				myfile << grid[i][j];
+			}
+            if (!oneline) myfile << "\n"; // New line after each row
+		}
+        
+        myfile.close();
+        return true;
+    }
+    else {
+        std::cerr << "Error: Could not open file.\n";
+        return false;
+    }
 }
 
 

@@ -43,30 +43,11 @@ std::vector<Sudoku> readMultipleSudokusFromFile(const std::string& path)
 int main() {
 
 	Sudoku sudoku;
-	sudoku.readFromFile("xWing.txt");
-	sudoku.printOutTheGrid();
-	if (sudoku.isGridCorrect())
-	{
-		std::cout << "Grid is correct\n";
-	}
-	else
-	{
-		std::cout << "Grid is NOT correct\n";
-	}
+ //   sudoku.initializeFromUserInput();
+	//sudoku.printOutTheGrid();
+	//sudoku.saveToFile();
 
-    //sudoku.printPossibilities();
-    
-    sudoku.findHints();
-
-	sudoku.printPossibilitiesChange();
-
-    sudoku.findHints();
-
-    sudoku.printPossibilitiesChange();
-
-
-
-
-
+	sudoku.readFromFile("1746897797.txt", true);
+    sudoku.printOutTheGrid();
 	return 0;
 }

@@ -5,7 +5,7 @@
 #include <vector>
 #include <fstream>
 #include <string>
-
+#include <ctime>
 
 /* --- Grid and possibilities ---*/
 
@@ -53,12 +53,14 @@ public:
 
     // TO-DO reading from file checks if puzzle is solvable/correct
 
+    /* file reading / saving */
+
+    bool readFromFile(const std::string& path, bool oneline);
+	bool saveToFile(bool oneline);
+
+
     /**/
-
-    bool readFromFile(const std::string& sciezka);
-    bool readFromFile2(const std::string& path);
     void printOutTheGrid();
-
     bool isGridCorrect() const;
 
 
