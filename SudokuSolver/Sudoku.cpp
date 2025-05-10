@@ -524,9 +524,9 @@ void Sudoku::insertPencilMarkFromUserInput() {
     if (num == 0) {
         possibilities[row - 1][col - 1] = {};
     }
-    else if (num >= 1 and num <= 9) {
+    else if (num >= 1 && num <= 9) {
         // Check if the pencil mark can be inserted
-        if (grid[row - 1][col - 1] == 0 and !cellContains(possibilities[row - 1][col - 1], num)) {
+        if (grid[row - 1][col - 1] == 0 && !cellContains(possibilities[row - 1][col - 1], num)) {
             // Insert the pencil mark into the possibilities grid
             possibilities[row - 1][col - 1].push_back(num);
             std::cout << "Pencil mark " << num << " inserted at (" << row << ", " << col << ").\n";
@@ -847,7 +847,7 @@ void Sudoku::findAllHiddenPairs()
 
 }
 
-void Sudoku::xWing() {
+bool Sudoku::xWing() {
     // iterate through all pairs of rows
     for (short h1 = 0; h1 < 9; ++h1) {
         for (short h2 = h1 + 1; h2 < 9; ++h2) {
@@ -878,9 +878,9 @@ void Sudoku::xWing() {
                             // check how many times candidate appears in h1 and h2
                             short count_h1 = 0, count_h2 = 0;
                             for (short col = 0; col < 9; ++col) {
-                                if (std::find(possibilities[h1][col].begin(), possibilities[h1][col].end(), candidate) != possibilities[h1][col].end())
+                                if (cellContains(possibilities[h1][col], candidate))
                                     ++count_h1;
-                                if (std::find(possibilities[h2][col].begin(), possibilities[h2][col].end(), candidate) != possibilities[h2][col].end())
+                                if (cellContains(possibilities[h2][col], candidate))
                                     ++count_h2;
                             }
 
@@ -898,6 +898,7 @@ void Sudoku::xWing() {
                                         possibilities[row][v2].erase(std::remove(possibilities[row][v2].begin(), possibilities[row][v2].end(), candidate), possibilities[row][v2].end());
                                     }
                                 }
+                            return true;
                             }
                         }
                     }
@@ -905,6 +906,7 @@ void Sudoku::xWing() {
             }
         }
     }
+    return false;
 }
 
 

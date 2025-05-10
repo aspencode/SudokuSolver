@@ -95,7 +95,7 @@ public:
 
     /* xWing */
     
-    void xWing();
+    bool xWing();
 
     /* POINTING TRIPLES */
 

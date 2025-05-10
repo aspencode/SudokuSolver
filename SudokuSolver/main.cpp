@@ -1,5 +1,6 @@
 #include "Sudoku.h"
 
+
 std::vector<Sudoku> readMultipleSudokusFromFile(const std::string& path)
 {
     std::ifstream inputFile(path);
@@ -42,7 +43,7 @@ std::vector<Sudoku> readMultipleSudokusFromFile(const std::string& path)
 int main() {
 
 	Sudoku sudoku;
-	sudoku.readFromFile2("hsbox.txt");
+	sudoku.readFromFile("xWing.txt");
 	sudoku.printOutTheGrid();
 	if (sudoku.isGridCorrect())
 	{
@@ -56,14 +57,16 @@ int main() {
     sudoku.findHints();
     sudoku.printPossibilities();
 
-    if (sudoku.hiddenSingleInBox(7, 1)) {
-		std::cout << "Hidden single found\n";
+    if (sudoku.xWing()) {
+		std::cout << "  found\n";
 	}
     else {
-        std::cout << "No hidden single found\n";
+        std::cout << "Not   found\n";
     }
 
-	sudoku.printOutTheGrid();
+	sudoku.printPossibilities();
+
+
 
 	return 0;
 }
