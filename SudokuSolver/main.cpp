@@ -57,12 +57,14 @@ int main() {
     sudoku.findHints();
     sudoku.printPossibilities();
 
-    if (sudoku.xWing()) {
-		std::cout << "  found\n";
-	}
-    else {
-        std::cout << "Not   found\n";
-    }
+    sudoku.xWing();
+    
+ //   if (sudoku.xWing()) {
+	//	std::cout << "  found\n";
+	//}
+ //   else {
+ //       std::cout << "Not   found\n";
+ //   }
 
 	sudoku.printPossibilities();
 

@@ -25,6 +25,9 @@ class Sudoku
 private:
     std::array<std::array<std::vector<short>, 9>, 9> possibilities;
     Grid grid;
+
+
+
     int solutions = 0;
 
     bool cellContains(const std::vector<short>& cell, short num);

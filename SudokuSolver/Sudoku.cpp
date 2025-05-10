@@ -279,25 +279,42 @@ void Sudoku::clearPossibilities()
 }
 
 void Sudoku::printPossibilities() {
+    const std::string RESET = "\033[0m";
+
+    // Text colors
+    const std::string color1 = "\033[38;5;251m"; 
+    const std::string color2 = "\033[38;5;251m"; 
+
+    // Background colors
+    const std::string bg1 = "\033[48;5;234m"; 
+    const std::string bg2 = "\033[48;5;236m";
+
     std::cout << "    ----1---- ----2---- ----3----   ----4---- ----5---- ----6----   ----7---- ----8---- ----9----\n";
     std::cout << "  +-------------------------------+-------------------------------+-------------------------------+\n";
+
     for (int x = 0; x < 9; ++x) {
-        std::cout << 1 + x << " "; // row nr signifier
+        std::cout << 1 + x << " ";
         for (int y = 0; y < 9; ++y) {
-            if (y % 3 == 0) std::cout << "| "; // box separators
+            if (y % 3 == 0) std::cout << "| ";
+
+            // Checkerboard grid pattern
+            bool light = (x + y) % 2 == 0;
+            std::string bgColor = light ? bg1 : bg2;
+            std::string fgColor = light ? color1 : color2;
+            
+		
+
             const auto& cell = possibilities[x][y];
-            std::string display(9, ' '); // "         " (9 spaces)
-            if (cell.empty()) {
-                std::fill(display.begin(), display.end(), ' '); // fill display with just 9 spaces
+            std::string display(9, ' ');
+            for (int val : cell) {
+                if (val >= 1 && val <= 9)
+                    display[val - 1] = '0' + val;
             }
-            else {
-                for (int val : cell) {
-                    display[val - 1] = val + '0'; // display is (0,8) and cells have numbers (1-9) so -1
-                }
-            }
-            std::cout << display << " ";
+
+            std::cout << bgColor << fgColor << display << RESET << " ";
         }
         std::cout << "|\n";
+
         if (x < 8) {
             if (x % 3 == 2)
                 std::cout << "  +-------------------------------+-------------------------------+-------------------------------+\n";
@@ -305,8 +322,10 @@ void Sudoku::printPossibilities() {
                 std::cout << "  |-------------------------------|-------------------------------|-------------------------------|\n";
         }
     }
+
     std::cout << "  +-------------------------------+-------------------------------+-------------------------------+\n";
 }
+
 
 bool Sudoku::basicHintSolve(int max_steps)
 {
@@ -848,6 +867,7 @@ void Sudoku::findAllHiddenPairs()
 }
 
 bool Sudoku::xWing() {
+    bool change = false;
     // iterate through all pairs of rows
     for (short h1 = 0; h1 < 9; ++h1) {
         for (short h2 = h1 + 1; h2 < 9; ++h2) {
@@ -898,7 +918,7 @@ bool Sudoku::xWing() {
                                         possibilities[row][v2].erase(std::remove(possibilities[row][v2].begin(), possibilities[row][v2].end(), candidate), possibilities[row][v2].end());
                                     }
                                 }
-                            return true;
+                                change = true;
                             }
                         }
                     }
@@ -906,8 +926,9 @@ bool Sudoku::xWing() {
             }
         }
     }
-    return false;
+    return change;
 }
+
 
 
 bool Sudoku::pointingTriplesInRow(short x)
