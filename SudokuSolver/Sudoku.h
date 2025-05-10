@@ -7,17 +7,17 @@
 #include <string>
 
 
-    /* --- Grid and possibilities ---*/
-    
-    // 0 means the cell is empty, number from 1 to 9 means that the number is there
+/* --- Grid and possibilities ---*/
 
-    // possibilities is a 9x9xN grid which holds possible numbers for each cell, 
-    // it's like pencil marks in regular sudoku
+// 0 means the cell is empty, number from 1 to 9 means that the number is there
 
-    // the grid is.. the grid. 
-    // Y is columns from left to right and X is rows from top to bottom. 
-    // its from 0 to 8
-    // so top right would be [0][8]
+// possibilities is a 9x9xN grid which holds possible numbers for each cell, 
+// it's like pencil marks in regular sudoku
+
+// the grid is.. the grid. 
+// Y is columns from left to right and X is rows from top to bottom. 
+// its from 0 to 8
+// so top right would be [0][8]
 
 using Grid = std::array<std::array<short, 9>, 9>;
 class Sudoku
@@ -26,18 +26,20 @@ private:
     std::array<std::array<std::vector<short>, 9>, 9> possibilities;
     Grid grid;
 
+    std::array<std::array<std::vector<short>, 9>, 9> prevPossibilities;
+    Grid prevGrid;
 
 
     int solutions = 0;
 
     bool cellContains(const std::vector<short>& cell, short num);
-    bool boxContainsNumber(short x, short y, short number); 
-    bool rowContainsNumber(short row, short number); 
-    bool colContainsNumber(short col, short number); 
+    bool boxContainsNumber(short x, short y, short number);
+    bool rowContainsNumber(short row, short number);
+    bool colContainsNumber(short col, short number);
 
     bool isPossible(short x, short y, short number);  //checks if a number in col y, row x is possible to be put there
 
-    bool isValidPlacement(const Grid& tempGrid, int row, int col, int num) const; 
+    bool isValidPlacement(const Grid& tempGrid, int row, int col, int num) const;
 
     void removePossibility(int x, int y, short number);
 
@@ -46,15 +48,15 @@ public:
 
     /* CONSTRUNTORS */
     Sudoku(); // empty Grid (filled with 0s)
-    Sudoku(const std::string& sciezka); 
-    Sudoku(const Grid& _grid); 
+    Sudoku(const std::string& sciezka);
+    Sudoku(const Grid& _grid);
 
-	// TO-DO reading from file checks if puzzle is solvable/correct
+    // TO-DO reading from file checks if puzzle is solvable/correct
 
     /**/
 
     bool readFromFile(const std::string& sciezka);
-	bool readFromFile2(const std::string& path);
+    bool readFromFile2(const std::string& path);
     void printOutTheGrid();
 
     bool isGridCorrect() const;
@@ -75,6 +77,8 @@ public:
     void findHints();
     void clearPossibilities();
     void printPossibilities();
+	void printPrevPossibilities();
+    bool printPossibilitiesChange();
 
     bool basicHintSolve(int max_steps);
 
@@ -88,7 +92,7 @@ public:
     bool hiddenSingleInCol(short y); // needs column number (0-8)
     bool hiddenSingleInRow(short x); // needs row number (0-8)
     bool findAllHiddenSingles();
-    
+
     /* HIDDEN PAIRS */
 
     void hiddenPairInBox(short x, short y); //needs x,y of any cell that is in that box
@@ -97,7 +101,7 @@ public:
     void findAllHiddenPairs();
 
     /* xWing */
-    
+
     bool xWing();
 
     /* POINTING TRIPLES */

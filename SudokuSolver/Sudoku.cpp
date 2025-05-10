@@ -193,7 +193,7 @@ bool Sudoku::isPossible(short x, short y, short number)
     return true;
 }
 
-bool Sudoku::isValidPlacement(const Grid& tempGrid, int row, int col, int num) const{
+bool Sudoku::isValidPlacement(const Grid& tempGrid, int row, int col, int num) const {
     // Check the row
     for (int i = 0; i < 9; ++i) {
         if (tempGrid[row][i] == num) return false;
@@ -250,7 +250,7 @@ int Sudoku::getSolutions()
 
 void Sudoku::findHints()
 {
-
+    prevPossibilities = possibilities; 
     for (short x = 0;x < 9;x++) { //for every row
         for (short y = 0; y < 9; y++) { //for every column
             for (short num = 1; num < 10; ++num) { //for every number (1,2,3,...,9)
@@ -282,11 +282,11 @@ void Sudoku::printPossibilities() {
     const std::string RESET = "\033[0m";
 
     // Text colors
-    const std::string color1 = "\033[38;5;251m"; 
-    const std::string color2 = "\033[38;5;251m"; 
+    const std::string color1 = "\033[38;5;251m";
+    const std::string color2 = "\033[38;5;251m";
 
     // Background colors
-    const std::string bg1 = "\033[48;5;234m"; 
+    const std::string bg1 = "\033[48;5;234m";
     const std::string bg2 = "\033[48;5;236m";
 
     std::cout << "    ----1---- ----2---- ----3----   ----4---- ----5---- ----6----   ----7---- ----8---- ----9----\n";
@@ -301,8 +301,8 @@ void Sudoku::printPossibilities() {
             bool light = (x + y) % 2 == 0;
             std::string bgColor = light ? bg1 : bg2;
             std::string fgColor = light ? color1 : color2;
-            
-		
+
+
 
             const auto& cell = possibilities[x][y];
             std::string display(9, ' ');
@@ -326,9 +326,127 @@ void Sudoku::printPossibilities() {
     std::cout << "  +-------------------------------+-------------------------------+-------------------------------+\n";
 }
 
+void Sudoku::printPrevPossibilities()
+{
+    const std::string RESET = "\033[0m";
+
+    // Text colors
+    const std::string color1 = "\033[38;5;251m";
+    const std::string color2 = "\033[38;5;251m";
+
+    // Background colors
+    const std::string bg1 = "\033[48;5;234m";
+    const std::string bg2 = "\033[48;5;236m";
+
+    std::cout << "    ----1---- ----2---- ----3----   ----4---- ----5---- ----6----   ----7---- ----8---- ----9----\n";
+    std::cout << "  +-------------------------------+-------------------------------+-------------------------------+\n";
+
+    for (int x = 0; x < 9; ++x) {
+        std::cout << 1 + x << " ";
+        for (int y = 0; y < 9; ++y) {
+            if (y % 3 == 0) std::cout << "| ";
+
+            // Checkerboard grid pattern
+            bool light = (x + y) % 2 == 0;
+            std::string bgColor = light ? bg1 : bg2;
+            std::string fgColor = light ? color1 : color2;
+
+
+
+            const auto& cell = prevPossibilities[x][y];
+            std::string display(9, ' ');
+            for (int val : cell) {
+                if (val >= 1 && val <= 9)
+                    display[val - 1] = '0' + val;
+            }
+
+            std::cout << bgColor << fgColor << display << RESET << " ";
+        }
+        std::cout << "|\n";
+
+        if (x < 8) {
+            if (x % 3 == 2)
+                std::cout << "  +-------------------------------+-------------------------------+-------------------------------+\n";
+            else
+                std::cout << "  |-------------------------------|-------------------------------|-------------------------------|\n";
+        }
+    }
+
+    std::cout << "  +-------------------------------+-------------------------------+-------------------------------+\n";
+}
+
+bool Sudoku::printPossibilitiesChange()
+{
+    std::cout << "--------------------- previous possibilities: --------------------- \n";
+    printPrevPossibilities();
+	std::cout << "--------------------- current possibilities: --------------------- \n";
+	bool change = true;
+	if (prevPossibilities == possibilities) change = false;
+
+    const std::string RESET = "\033[0m";
+
+    // Text colors
+    const std::string color1 = "\033[38;5;251m";
+    const std::string color2 = "\033[38;5;251m";
+
+    // Background colors
+    const std::string bg1 = "\033[48;5;234m";
+    const std::string bg2 = "\033[48;5;236m";
+    const std::string bg3 = "\033[48;5;160m"; // red bg highlight
+
+    std::cout << "    ----1---- ----2---- ----3----   ----4---- ----5---- ----6----   ----7---- ----8---- ----9----\n";
+    std::cout << "  +-------------------------------+-------------------------------+-------------------------------+\n";
+
+    for (int x = 0; x < 9; ++x) {
+        std::cout << 1 + x << " ";
+        for (int y = 0; y < 9; ++y) {
+            if (y % 3 == 0) std::cout << "| ";
+
+            // Checkerboard grid pattern
+            bool light = (x + y) % 2 == 0;
+            std::string bgColor = light ? bg1 : bg2;
+            std::string fgColor = light ? color1 : color2;
+
+            const auto& cell = possibilities[x][y];
+            std::string display(9, ' ');
+            for (int val : cell) {
+                if (val >= 1 && val <= 9)
+                    display[val - 1] = '0' + val;
+            }
+
+			if (possibilities[x][y] == prevPossibilities[x][y]) 
+                std::cout << bgColor << fgColor << display << RESET << " ";
+            else 
+                std::cout << bg3 << fgColor << display << RESET << " ";
+
+
+        }
+        std::cout << "|\n";
+
+        if (x < 8) {
+            if (x % 3 == 2)
+                std::cout << "  +-------------------------------+-------------------------------+-------------------------------+\n";
+            else
+                std::cout << "  |-------------------------------|-------------------------------|-------------------------------|\n";
+        }
+    }
+
+    std::cout << "  +-------------------------------+-------------------------------+-------------------------------+\n";
+
+	if (change) {
+        std::cout << "There was a change in pencil marks\n";
+	}
+	else {
+		std::cout << "No changes in pencil marks\n";
+	}
+
+    return change;
+}
+
 
 bool Sudoku::basicHintSolve(int max_steps)
 {
+    prevPossibilities = possibilities; 
     short size;
     short changes;
     bool solved = false;
@@ -467,6 +585,7 @@ void Sudoku::initializeFromUserInput()
 }
 
 void Sudoku::insertNumberFromUserInput() {
+    prevPossibilities = possibilities; prevGrid = grid;
     int row, col, num;
 
     // Prompt the user for row, column, and number
@@ -509,6 +628,7 @@ void Sudoku::insertNumberFromUserInput() {
 }
 
 void Sudoku::insertPencilMarkFromUserInput() {
+    prevPossibilities = possibilities; 
     short row, col, num;
 
     // Prompt the user for row, column, and number
@@ -560,6 +680,7 @@ void Sudoku::insertPencilMarkFromUserInput() {
 
 bool Sudoku::hiddenSingleInBox(short x, short y)
 {
+    prevPossibilities = possibilities; prevGrid = grid;
     // Checking the box it's in
     int xBox = (x / 3) * 3; //top of box
     int yBox = (y / 3) * 3; // left of box
@@ -605,7 +726,8 @@ bool Sudoku::hiddenSingleInBox(short x, short y)
 
 bool Sudoku::hiddenSingleInCol(short y)
 {
-	bool modified = false;
+    prevPossibilities = possibilities; prevGrid = grid;
+    bool modified = false;
     int xLocation, iLocation;
     for (int number = 1;number <= 9;number++) {
         short cnt = 0;
@@ -634,7 +756,8 @@ bool Sudoku::hiddenSingleInCol(short y)
 
 bool Sudoku::hiddenSingleInRow(short x)
 {
-	bool modified = false;
+    prevPossibilities = possibilities; prevGrid = grid;
+    bool modified = false;
     int yLocation, iLocation;
     for (int number = 1; number <= 9; number++) {
         short cnt = 0;
@@ -658,7 +781,7 @@ bool Sudoku::hiddenSingleInRow(short x)
         }
         if (cnt == 1) {
             insertNumber(x, yLocation, number);
-			modified = true;
+            modified = true;
         }
     }
     return modified;
@@ -666,28 +789,32 @@ bool Sudoku::hiddenSingleInRow(short x)
 
 bool Sudoku::findAllHiddenSingles()
 {
+    
+    auto tempPossibilities = possibilities; auto tempGrid = grid;
+
     bool modified = false;
     for (int a = 0; a <= 6; a = a + 3) {
         if (hiddenSingleInBox(a, 0)) modified = true;
         if (hiddenSingleInBox(a, 3)) modified = true;
         if (hiddenSingleInBox(a, 6)) modified = true;
     }
-    //clearPossibilities(); findHints();
-    for (int a = 0; a <= 8; a++) {
-        if(hiddenSingleInRow(a)) modified = true;
-    }
-    //clearPossibilities(); findHints();
-    for (int a = 0; a <= 8; a++) {
-        if(hiddenSingleInCol(a)) modified = true;
-    }
-    //clearPossibilities(); findHints();
 
+    for (int a = 0; a <= 8; a++) {
+        if (hiddenSingleInRow(a)) modified = true;
+    }
+
+    for (int a = 0; a <= 8; a++) {
+        if (hiddenSingleInCol(a)) modified = true;
+    }
+
+    prevPossibilities = tempPossibilities; prevGrid = tempGrid;
     return modified;
 
 }
 
 void Sudoku::hiddenPairInBox(short x, short y)
 {
+    prevPossibilities = possibilities; prevGrid = grid;
     int num1Counter, num2Counter;
     int num1Loc1X{ -1 }, num1Loc1Y{ -1 }, num1Loc2X{ -1 }, num1Loc2Y{ -1 };
     int num2Loc1X{ -1 }, num2Loc1Y{ -1 }, num2Loc2X{ -1 }, num2Loc2Y{ -1 };
@@ -748,6 +875,7 @@ void Sudoku::hiddenPairInBox(short x, short y)
 
 void Sudoku::hiddenPairInCol(short y)
 {
+    prevPossibilities = possibilities; prevGrid = grid;
     int num1Counter, num2Counter;
     int num1Loc1X{ -1 }, num1Loc2X{ -1 };
     int num2Loc1X{ -1 }, num2Loc2X{ -1 };
@@ -799,6 +927,7 @@ void Sudoku::hiddenPairInCol(short y)
 
 void Sudoku::hiddenPairInRow(short x)
 {
+    prevPossibilities = possibilities; prevGrid = grid;
     int num1Counter, num2Counter;
     int num1Loc1Y{ -1 }, num1Loc2Y{ -1 };
     int num2Loc1Y{ -1 }, num2Loc2Y{ -1 };
@@ -850,6 +979,8 @@ void Sudoku::hiddenPairInRow(short x)
 
 void Sudoku::findAllHiddenPairs()
 {
+    auto tempPossibilities = possibilities; auto tempGrid = grid;
+
     for (int a = 0; a <= 6; a = a + 3) {
         hiddenPairInBox(a, 0);
         hiddenPairInBox(a, 3);
@@ -864,9 +995,11 @@ void Sudoku::findAllHiddenPairs()
         hiddenPairInCol(a);
     }
 
+    prevPossibilities = tempPossibilities; prevGrid = tempGrid;
 }
 
 bool Sudoku::xWing() {
+	prevPossibilities = possibilities; prevGrid = grid;
     bool change = false;
     // iterate through all pairs of rows
     for (short h1 = 0; h1 < 9; ++h1) {
@@ -933,6 +1066,7 @@ bool Sudoku::xWing() {
 
 bool Sudoku::pointingTriplesInRow(short x)
 {
+	prevPossibilities = possibilities; prevGrid = grid;
     for (short num = 1; num <= 9;num++)
     {
         if (rowContainsNumber(x, num)) continue;
@@ -979,6 +1113,7 @@ bool Sudoku::pointingTriplesInRow(short x)
 
 bool Sudoku::pointingTriplesInCol(short y)
 {
+    prevPossibilities = possibilities; prevGrid = grid;
     for (short num = 1; num <= 9; num++)
     {
         if (colContainsNumber(y, num)) continue;
@@ -1025,6 +1160,7 @@ bool Sudoku::pointingTriplesInCol(short y)
 
 bool Sudoku::findAllPointingTriples()
 {
+    auto tempPossibilities = possibilities; auto tempGrid = grid;
     bool found = false;
     for (short y = 0; y < 9; ++y) {
         if (pointingTriplesInCol(y) == 1) found = true;
@@ -1032,11 +1168,13 @@ bool Sudoku::findAllPointingTriples()
     for (short x = 0;x < 9; ++x) {
         if (pointingTriplesInRow(x) == 1) found = true;
     }
+    prevPossibilities = tempPossibilities; prevGrid = tempGrid;
     return found;
 }
 
 bool Sudoku::pointingDoublesInRow(short x)
 {
+    prevPossibilities = possibilities; prevGrid = grid;
     for (short num = 1; num <= 9; num++)
     {
         if (rowContainsNumber(x, num)) continue; // skip if the row already contains the number
@@ -1077,6 +1215,7 @@ bool Sudoku::pointingDoublesInRow(short x)
 
 bool Sudoku::pointingDoublesInCol(short y)
 {
+    prevPossibilities = possibilities; prevGrid = grid;
     for (short num = 1; num <= 9; num++)
     {
         if (colContainsNumber(y, num)) continue; // skip if the column already contains the number
@@ -1117,6 +1256,7 @@ bool Sudoku::pointingDoublesInCol(short y)
 
 bool Sudoku::findAllPointingDoubles()
 {
+    auto tempPossibilities = possibilities; auto tempGrid = grid;
     bool found = false;
     for (short y = 0; y < 9; ++y) {
         if (pointingDoublesInCol(y) == 1) found = true;
@@ -1124,5 +1264,6 @@ bool Sudoku::findAllPointingDoubles()
     for (short x = 0; x < 9; ++x) {
         if (pointingDoublesInRow(x) == 1) found = true;
     }
+    prevPossibilities = tempPossibilities; prevGrid = tempGrid;
     return found;
 }

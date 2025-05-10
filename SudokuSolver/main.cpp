@@ -54,19 +54,17 @@ int main() {
 		std::cout << "Grid is NOT correct\n";
 	}
 
-    sudoku.findHints();
-    sudoku.printPossibilities();
-
-    sudoku.xWing();
+    //sudoku.printPossibilities();
     
- //   if (sudoku.xWing()) {
-	//	std::cout << "  found\n";
-	//}
- //   else {
- //       std::cout << "Not   found\n";
- //   }
+    sudoku.findHints();
 
-	sudoku.printPossibilities();
+	sudoku.printPossibilitiesChange();
+
+    sudoku.findHints();
+
+    sudoku.printPossibilitiesChange();
+
+
 
 
 
